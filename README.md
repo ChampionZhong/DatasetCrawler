@@ -311,14 +311,10 @@ A: Use the checkpoint feature, which supports resuming after interruption. You c
 
 A: The scripts have built-in retry mechanisms that automatically retry failed requests. You can also adjust the `--max_retries` parameter.
 
-## License
-
-[Add license information]
-
 ## Contributing
 
 Issues and Pull Requests are welcome!
 
 ## Contact
 
-[Add contact information]
+championzhong@sjtu.edu.cn
