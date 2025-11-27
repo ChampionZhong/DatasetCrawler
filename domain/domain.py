@@ -646,8 +646,8 @@ def main():
         "-d",
         type=str,
         required=True,
-        choices=["agent", "agent_specific", "finance"],
-        help="Domain to filter (agent, agent_specific, finance).",
+        choices=["agent", "agent_specific", "finance", "vqa"],
+        help="Domain to filter (agent, agent_specific, finance, vqa).",
     )
     parser.add_argument(
         "--input", "-i", type=str, required=True, help="Path to the input JSONL file."

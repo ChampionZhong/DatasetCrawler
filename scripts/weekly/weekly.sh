@@ -13,7 +13,7 @@ timestamp=$(date +'%Y-%m-%d')
 
 mkdir -p data/weekly/weekly_${timestamp}
 
-python 1_crawler.py -o "data/weekly/weekly_${timestamp}/1_weekly_crawler_${timestamp}.pkl" --limit 5000
+python 1_crawler.py -o "data/weekly/weekly_${timestamp}/1_weekly_crawler_${timestamp}.pkl" --limit 10000
 python 2_process.py -i "data/weekly/weekly_${timestamp}/1_weekly_crawler_${timestamp}.pkl" -o "data/weekly/weekly_${timestamp}/2_weekly_processed_${timestamp}.jsonl"
 python weekly/weekly.py -i "data/weekly/weekly_${timestamp}/2_weekly_processed_${timestamp}.jsonl" -o "data/weekly/weekly_${timestamp}/3_weekly_classified_${timestamp}.jsonl"
 python utils/json2xlsx.py -i "data/weekly/weekly_${timestamp}/3_weekly_classified_${timestamp}.jsonl" -o "data/weekly/weekly_${timestamp}/3_weekly_classified_${timestamp}.xlsx"

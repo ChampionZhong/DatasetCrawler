@@ -127,6 +127,14 @@ if __name__ == "__main__":
     # Load metadata from pickle file
     metadata = load_object_from_pickle(args.input)
     
+    # Debug: Check if metadata is loaded correctly
+    if metadata is None:
+        print("WARNING: metadata is None!")
+    elif isinstance(metadata, list):
+        print(f"Loaded {len(metadata)} dataset records from pickle file")
+    else:
+        print(f"WARNING: metadata is not a list, type: {type(metadata)}")
+    
     cnt = 0
     all_extracted_info = []
     # domain_list = ["math","code","reasoning"] # check title, tags, description
@@ -134,8 +142,23 @@ if __name__ == "__main__":
     size_list = ['1K<n<10K','10K<n<100K','100K<n<1M','1M<n<10M']
     language_list = ['en','code']
     collect_date = datetime.today().date()
+    # NOTE(zzp): Set the date range for filtering datasets
+    start_date = datetime.strptime(args.start_date, "%Y-%m-%d").date()
+    print(f"start_date: {start_date}")
+    end_date = datetime.strptime(args.end_date, "%Y-%m-%d").date()
+    print(f"end_date: {end_date}")
+    
+    # Ensure start_date >= end_date for proper range checking
+    if start_date < end_date:
+        print(f"WARNING: start_date ({start_date}) < end_date ({end_date}), swapping them")
+        start_date, end_date = end_date, start_date
+        print(f"After swap - start_date: {start_date}, end_date: {end_date}")
 
+    processed_count = 0
     for info in metadata:
+        processed_count += 1
+        if processed_count % 10000 == 0:
+            print(f"Processed {processed_count} datasets...")
         if info.private or info.disabled:
             continue
 
@@ -177,14 +200,6 @@ if __name__ == "__main__":
             target_domain = False
             time_range = False
             size_check = False
-            
-            # NOTE(zzp): Set the date range for filtering datasets
-            start_date = datetime.strptime(args.start_date, "%Y-%m-%d").date()
-            end_date = datetime.strptime(args.end_date, "%Y-%m-%d").date()
-            # start_date = (datetime.today() - timedelta(days=10)).date()
-            # end_date = (datetime.today() - timedelta(days=3)).date()
-            # start_date = datetime(2025, 6, 1).date()
-            # end_date = datetime(2025, 8, 3).date()
 
             if "benchmark" in tag_dict:
                 benchmark = True
@@ -204,8 +219,11 @@ if __name__ == "__main__":
             if info.cardData:
                 card_data = True
             
-            if info.created_at.date() > start_date and info.created_at.date() < end_date:
+            # Check if created_at is within the date range (end_date <= created_at <= start_date)
+            # Note: start_date is typically today, end_date is typically N days ago
+            if info.created_at and end_date <= info.created_at.date() <= start_date:
                 time_range = True
+                print(f"time_range: {info.created_at.date()} is in the range [{end_date}, {start_date}]")
 
             if info.downloads>10:
                 downloads = True

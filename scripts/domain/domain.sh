@@ -17,7 +17,7 @@
 if [ -z "$1" ]; then
     echo "Error: Domain not specified"
     echo "Usage: sbatch domain.sh <domain>"
-    echo "Available domains: agent, agent_specific, finance"
+    echo "Available domains: agent, agent_specific, finance, vqa"
     exit 1
 fi
 
@@ -33,8 +33,8 @@ case $DOMAIN in
         BATCH_SIZE=500
         MAX_RETRIES=3
         CHECKPOINT_INTERVAL=500
-        INPUT_FILE="data/domain/${timestamp}/2_process_${timestamp}.jsonl"
-        OUTPUT_FILE="data/domain/${timestamp}/agent_${timestamp}.jsonl"
+        INPUT_FILE="data/domain/domain_${timestamp}/2_domain_processed_${timestamp}.jsonl"
+        OUTPUT_FILE="data/domain/domain_${timestamp}/agent_${timestamp}.jsonl"
         ;;
     agent_specific)
         MAX_CONCURRENT=16
@@ -44,20 +44,28 @@ case $DOMAIN in
         MIN_QUALITY=6
         MIN_CONFIDENCE=0.7
         CHECKPOINT_INTERVAL=32
-        INPUT_FILE="data/domain/${timestamp}/agent_${timestamp}.jsonl"
-        OUTPUT_FILE="data/domain/${timestamp}/agent_specific_${timestamp}.jsonl"
+        INPUT_FILE="data/domain/domain_${timestamp}/2_domain_processed_${timestamp}.jsonl"
+        OUTPUT_FILE="data/domain/domain_${timestamp}/agent_specific_${timestamp}.jsonl"
         ;;
     finance)
         MAX_CONCURRENT=32
         BATCH_SIZE=500
         MAX_RETRIES=3
         CHECKPOINT_INTERVAL=500
-        INPUT_FILE="data/domain/${timestamp}/2_process_${timestamp}.jsonl"
-        OUTPUT_FILE="data/domain/${timestamp}/finance_${timestamp}.jsonl"
+        INPUT_FILE="data/domain/domain_${timestamp}/2_domain_processed_${timestamp}.jsonl"
+        OUTPUT_FILE="data/domain/domain_${timestamp}/finance_${timestamp}.jsonl"
+        ;;
+    vqa)
+        MAX_CONCURRENT=32
+        BATCH_SIZE=500
+        MAX_RETRIES=3
+        CHECKPOINT_INTERVAL=500
+        INPUT_FILE="data/domain/domain_${timestamp}/2_domain_processed_${timestamp}.jsonl"
+        OUTPUT_FILE="data/domain/domain_${timestamp}/vqa_${timestamp}.jsonl"
         ;;
     *)
         echo "Error: Unknown domain: $DOMAIN"
-        echo "Available domains: agent, agent_specific, finance"
+        echo "Available domains: agent, agent_specific, finance, vqa"
         exit 1
         ;;
 esac
