@@ -27,7 +27,7 @@ def load_api_config():
     return {
         "base_url": base_url,
         "api_key": config.get("api_key", ""),
-        "model": config.get("model", "gpt-4o-mini-2025-07-16"),
+        "model": config.get("model", "gpt-5.2"),
     }
 
 

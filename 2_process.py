@@ -121,11 +121,23 @@ if __name__ == "__main__":
         type=str,
         help="End date to filter depends on date. (格式: YYYY-MM-DD)"
     )
-
+    parser.add_argument(
+        '--history_info',
+        default="./data/weekly/base/base.jsonl",
+        type=str,
+        help="Path to the history info JSONL file."
+    )
     args = parser.parse_args()
     
     # Load metadata from pickle file
     metadata = load_object_from_pickle(args.input)
+    history_info = load_jsonl(args.history_info)
+    
+    # Build a set of (id, author) tuples from history_info for fast lookup
+    history_set = set()
+    for item in history_info:
+        if 'id' in item and 'author' in item:
+            history_set.add((item['id'], item['author']))
     
     # Debug: Check if metadata is loaded correctly
     if metadata is None:
@@ -200,6 +212,15 @@ if __name__ == "__main__":
             target_domain = False
             time_range = False
             size_check = False
+            history_not_in = False
+            early_than_start_date = False
+            late_than_end_date = False
+
+            # Check if current dataset's id and author are in history
+            current_id = info.id.split('/')[-1]  # Extract dataset name from full path
+            current_author = info.author
+            if (current_id, current_author) not in history_set:
+                history_not_in = True
 
             if "benchmark" in tag_dict:
                 benchmark = True
@@ -223,7 +244,12 @@ if __name__ == "__main__":
             # Note: start_date is typically today, end_date is typically N days ago
             if info.created_at and end_date <= info.created_at.date() <= start_date:
                 time_range = True
-                print(f"time_range: {info.created_at.date()} is in the range [{end_date}, {start_date}]")
+            
+            if info.created_at and info.created_at.date() <= start_date:
+                early_than_start_date = True
+            
+            if info.created_at and info.created_at.date() >= end_date:
+                late_than_end_date = True
 
             if info.downloads>10:
                 downloads = True
@@ -249,7 +275,7 @@ if __name__ == "__main__":
             # collect = modality_text_only and likes and card_data and downloads and target_domain
             # collect = modality_text_only and target_domain and benchmark
             # collect = modality_text_only and time_range and downloads and size_check and card_data and language
-            collect = downloads and language and card_data and size_check and time_range
+            collect = downloads and language and card_data and size_check and history_not_in and early_than_start_date
 
             description = None
             if hasattr(info, "description") and info.description is not None:

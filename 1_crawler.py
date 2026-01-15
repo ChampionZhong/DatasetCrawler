@@ -30,10 +30,13 @@ def save_metadata_to_pickle(metadata, filename=None):
     return filename
 
 
-def fetch_all_dataset_metadata(limit=20000):
+def fetch_all_dataset_metadata(limit=None):
     print("Fetching list of all datasets from Hugging Face Hub...")
     # Get latest 20000 datasets
-    all_datasets_info = list(list_datasets(full=True, sort="created_at", direction=-1, limit=limit))
+    if limit is None:
+        all_datasets_info = list(list_datasets(full=True, sort="created_at", direction=-1))
+    else:
+        all_datasets_info = list(list_datasets(full=True, sort="created_at", direction=-1, limit=limit))
     # all_datasets_info = list(list_datasets(full=True, sort="created_at", direction=-1))
 
     return all_datasets_info
@@ -54,12 +57,16 @@ if __name__ == "__main__":
         '--limit',
         '-l',
         type=int,
-        default=20000,
+        # default=20000,
         help="Limit the number of datasets to fetch."
     )
     args = parser.parse_args()
-
-    metadata_list = fetch_all_dataset_metadata(args.limit)
+    try:
+        limit = args.limit
+        metadata_list = fetch_all_dataset_metadata(limit)
+    except:
+        limit = None
+        metadata_list = fetch_all_dataset_metadata()
     save_metadata_to_pickle(metadata_list, args.output)
 
 

@@ -4,7 +4,7 @@
 # bash monitor_progress.sh data/2025-10-27/agent_specific_2025-10-27.jsonl.checkpoint.json
 
 
-# 监控数据集处理进度脚本
+# monitor dataset processing progress
 
 if [ -z "$1" ]; then
     echo "Usage: $0 <checkpoint_file>"
@@ -27,7 +27,7 @@ echo "================================================"
 echo "Time: $(date '+%Y-%m-%d %H:%M:%S')"
 echo ""
 
-# 检查检查点文件是否存在
+# check if checkpoint file exists
 if [ ! -f "${CHECKPOINT_FILE}" ]; then
     echo "❌ Checkpoint file not found: ${CHECKPOINT_FILE}"
     echo ""
@@ -39,7 +39,7 @@ if [ ! -f "${CHECKPOINT_FILE}" ]; then
     exit 1
 fi
 
-# 显示检查点信息
+# show checkpoint information
 echo "📊 Checkpoint Information:"
 echo "---"
 if command -v jq &> /dev/null; then
@@ -56,7 +56,7 @@ else
     cat "${CHECKPOINT_FILE}"
 fi
 
-# 显示输出文件信息
+# show output file information
 echo ""
 echo "📁 Output File Information:"
 echo "---"
